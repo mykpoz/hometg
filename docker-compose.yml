@@ -1,67 +1,18 @@
-version: '3.4'
-
+version: '3.8'
 services:
   hometg:
-    build:
-      context: .
-      dockerfile: HomeTG.API/Dockerfile
-    pull_policy: build
-    ports:
-      - "5234:80"
-    volumes:
-      - /config/hometg:/home/root/.local/share/hometg/DB/hometg
-    environment:
-      "ASPNETCORE_ENVIRONMENT": "linux"
-      # Optional way to overwrite database connection.
-      # "ConnectionStrings__Sqlite": "Data Source=/usr/share/hometg/Collection.db"
-      # "provider": "Sqlite"
-      # "ConnectionStrings__Postgres": "Host=database;Username=hometg;Password=supersecretpassword;Database=hometg_db"
-      "provider": "Postgres"
-      # Uncomment the following line if you do not want to download the latest card DB on startup.
-      # "SKIP_PRINTINGS_DB_DOWNLOAD": "TRUE"
-    networks:
-      - public
-      - private
-    depends_on:
-      - database
-    restart: "unless-stopped"
-
-  hometg-react:
-    build:
-      context: .
-      dockerfile: HomeTG.React/Dockerfile
-    environment:
-      REACT_APP_PROXY_HOST: "http://hometg"
-      WDS_SOCKET_PORT: 0
-    pull_policy: build
-    ports:
-      - "5235:3000"
-    networks:
-      - public
-    depends_on:
-      - hometg
+    image: ghcr.io/hometg/hometg:latest
+    container_name: hometg
     restart: unless-stopped
-
-  # Remove this section if you want to use Sqlite instead.
-  # Word of warning: Sqlite is much slower when it comes to manipulating the DB.
-#database:
- #   image: 'postgres:latest'
-  #  ports:
-   #   - 5432:5432
-   # environment:
-    #  POSTGRES_USER: hometg
-    #  POSTGRES_PASSWORD: Hometg.1209!
-     # POSTGRES_DB: hometg_db
-   
-    #networks:
-    #  - private
-   #volumes:
-   #   - postgres-data:/var/lib/postgresql/data/
-   #restart: "unless-stopped"
-
-networks:
-  public:
-  private:
-
-volumes:
-  postgres-data:
+    ports:
+      - "8080:8080"  # Adjust port as needed
+    environment:
+      - DATABASE_URL=postgresql://Postpoz:Post.1209!@postgres-host:5432/hometg_db
+      # Or use separate variables:
+      - DB_HOST=your-postgres-host
+      - DB_PORT=5432
+      - DB_USER=your-username
+      - DB_PASSWORD=your-password
+      - DB_NAME=your-database-name
+    volumes:
+      - /mnt/user/appdata/hometg:/config
