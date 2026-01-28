@@ -50,7 +50,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: hometg
-      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_PASSWORD: Hometg.1209!
       POSTGRES_DB: hometg_db
     networks:
       - private
